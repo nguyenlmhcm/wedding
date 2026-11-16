@@ -1,45 +1,56 @@
 <template>
   <div class="live">
-    <p class = "desc">
-      위 애니메이션은 꼭 소리를 켜고 봐주세요!
-    </p>
+    <p class="desc" v-if="hasVideo">Nhớ bật tiếng khi xem video nhé!</p>
     <img src="~@/assets/images/hands.png" class="hands" />
-    <div>
-      <p class = "header">
-        "우리 손 잡을까요?"<br />
-      </p>
-      <p>
-        각자의 삶을 열심히 살아온 저희가,<br />
-        이제는 손을 잡고 함께 나란히 걸어가려 합니다.<br />
-        사랑한다는 말이 어울리는 사람과 함께<br />
-        오래도록 있는 힘을 다해 행복해지겠습니다.<br />
-        조용하지만 기쁨이 가득한 결혼 소식을<br />
-        이렇게 알려드립니다.
-      </p>
-      <p class = "header">
-        22년 1월 22일 금요일<br />
-        오전 11시 30분<br />
-      </p>
-      <p>
-        작은 가족식이기에 여러분의 얼굴을 보고 <br />
-        직접 감사와 축하를 나누지는 못하지만,<br />
-        대신 전세계가 참여할 수 있는<br />
-        YouTube Live방송으로 함께 하려고 합니다.<br />
-        여러분이 저희와 함께 있다고 느낄 수 있도록<br />
-        온라인으로 참석해서 채팅으로 축하해주세요.
-      </p>
-
+    <p class="header">"{{ inv.quote }}"</p>
+    <p>
+      <template v-for="(line, i) in inv.message">{{ line }}<br :key="i" /></template>
+    </p>
+    <div class="families">
+      <div v-for="f in inv.families" :key="f.side">
+        <div class="side">{{ f.side }}</div>
+        <div>{{ f.parents }}</div>
+      </div>
     </div>
-    <Button @click="attendance">영혼 참석하기</Button>
+    <p class="header">
+      {{ inv.dateText }}<br />
+      {{ inv.timeText }}
+    </p>
+    <p class="lunar" v-if="inv.lunarText">({{ inv.lunarText }})</p>
+    <p>
+      <strong>{{ venue.name }}</strong><br />
+      {{ venue.address }}
+    </p>
+    <Button @click="addToCalendar">Thêm vào lịch</Button>
   </div>
 </template>
 
 <script>
+import config from "../../wedding.config.js";
+
+const TWO_HOURS = 2 * 60 * 60 * 1000;
+const gcalTime = (d) => d.toISOString().replace(/[-:]|\.\d{3}/g, "");
+
 export default {
-  name: "Divider",
+  name: "Live",
+  data() {
+    return {
+      inv: config.invitation,
+      venue: config.venue,
+      hasVideo: !!config.intro.video,
+    };
+  },
   methods: {
-    attendance() {
-      window.open("https://youtu.be/yU9UULnBt0w");
+    addToCalendar() {
+      const start = new Date(this.inv.datetime);
+      const end = new Date(start.getTime() + TWO_HOURS);
+      const q = new URLSearchParams({
+        action: "TEMPLATE",
+        text: `Đám cưới ${config.groom} & ${config.bride}`,
+        dates: `${gcalTime(start)}/${gcalTime(end)}`,
+        location: `${this.venue.name}, ${this.venue.address}`,
+      });
+      window.open(`https://calendar.google.com/calendar/render?${q}`);
     },
   },
 };
@@ -47,10 +58,7 @@ export default {
 
 <style lang="scss" scoped>
 .live {
-  padding-top: 4px;
-  padding-bottom: 68px;
-  padding-left: $padding-vertical;
-  padding-right: $padding-vertical;
+  padding: 4px $padding-vertical 68px;
   text-align: center;
   .hands {
     width: 75px;
@@ -61,15 +69,36 @@ export default {
     line-height: 24px;
     &.desc {
       color: #295238;
-      font-size: 10px;
+      font-size: 12px;
       opacity: 0.6;
       margin-bottom: 36px;
     }
     &.header {
       color: #295238;
+      font-size: 17px;
     }
-    &:last-child {
+    &.lunar {
+      font-size: 13px;
+      opacity: 0.7;
+      margin-top: -10px;
+    }
+    strong {
+      color: #295238;
+    }
+    &:last-of-type {
       margin-bottom: 40px;
+    }
+  }
+  .families {
+    display: flex;
+    justify-content: space-around;
+    gap: 12px;
+    margin: 8px 0 24px;
+    line-height: 22px;
+    font-size: 13px;
+    .side {
+      color: #295238;
+      font-size: 15px;
     }
   }
 }

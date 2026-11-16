@@ -8,21 +8,11 @@
     <Divider />
     <Gallery />
     <Divider />
-    <Celebrate @click="handleClick" :presents="presents" />
-    <Divider />
     <Map />
-    <Divider />
-    <Funding />
-    <Divider />
-    <div style="display: none">
-      <Credit />
-    </div>
-    <BottomSheet
-      :is-open="isOpen"
-      @close="handleClose"
-      v-scroll-lock="isOpen"
-      :present="selectedPresent"
-    />
+    <template v-if="hasGifts">
+      <Divider />
+      <Gift />
+    </template>
   </div>
 </template>
 
@@ -30,57 +20,16 @@
 import IntroMovie from "./components/IntroMovie.vue";
 import Live from "./components/Live.vue";
 import Gallery from "./components/Gallery.vue";
-import Funding from "./components/Funding.vue";
-import Credit from "./components/Credit.vue";
-import Celebrate from "./components/Celebrate.vue";
 import Map from "./components/Map.vue";
+import Gift from "./components/Gift.vue";
 import FlowerRain from "./components/FlowerRain.vue";
-import BottomSheet from "./components/BottomSheet.vue";
-import firebase from "firebase";
+import config from "../wedding.config.js";
 
 export default {
   name: "App",
-  components: {
-    IntroMovie,
-    Live,
-    Gallery,
-    Funding,
-    Credit,
-    Celebrate,
-    FlowerRain,
-    BottomSheet,
-    Map,
-  },
+  components: { IntroMovie, Live, Gallery, Map, Gift, FlowerRain },
   data() {
-    return {
-      isOpen: false,
-      presents: [],
-      selectedPresent: {},
-    };
-  },
-  created() {
-    this.loadPresents();
-  },
-  methods: {
-    loadPresents() {
-      const presentsRef = firebase.database().ref("presents");
-      presentsRef.on("value", (snapshot) => {
-        const presents = snapshot.val();
-        this.presents = presents.map((present, index) => {
-          return {
-            ...present,
-            id: index,
-          };
-        });
-      });
-    },
-    handleClick(present) {
-      this.isOpen = true;
-      this.selectedPresent = present;
-    },
-    handleClose() {
-      this.isOpen = false;
-    },
+    return { hasGifts: (config.gifts || []).length > 0 };
   },
 };
 </script>
@@ -227,7 +176,7 @@ button {
   box-sizing: border-box;
 }
 #kyong {
-  font-family: "Cafe24Oneprettynight", sans-serif;
+  font-family: "Patrick Hand", sans-serif;
   max-width: 460px;
   margin: 0 auto;
   font-size: 15px;

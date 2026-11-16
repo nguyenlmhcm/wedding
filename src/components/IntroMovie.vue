@@ -1,47 +1,36 @@
 <template>
   <div class="intro-movie">
     <div class="image">
-      <img src="~@/assets/images/intro-image.png" />
+      <img v-if="intro.image" :src="asset(intro.image)" />
+      <div v-else class="title">
+        <h1>{{ intro.heading }}</h1>
+        <div class="ribbon"></div>
+        <p class="names">{{ groom }}<span>&amp;</span>{{ bride }}</p>
+      </div>
     </div>
-    <div class="movie">
-      <video
-        poster="/wedding/img/video-thumbnail.jpg"
-        :autoplay="getOS() !== 'iOS'"
-        controls
-      >
-        <source src="/wedding/intro.mp4" type="video/mp4" />
+    <div class="movie" v-if="intro.video">
+      <video :poster="asset(intro.poster)" :autoplay="!isIOS" controls playsinline>
+        <source :src="asset(intro.video)" type="video/mp4" />
       </video>
     </div>
   </div>
 </template>
 
 <script>
+import config from "../../wedding.config.js";
+import { asset } from "../asset.js";
+
 export default {
   name: "IntroMovie",
-  methods: {
-    getOS() {
-      var userAgent = window.navigator.userAgent,
-        platform = window.navigator.platform,
-        macosPlatforms = ["Macintosh", "MacIntel", "MacPPC", "Mac68K"],
-        windowsPlatforms = ["Win32", "Win64", "Windows", "WinCE"],
-        iosPlatforms = ["iPhone", "iPad", "iPod"],
-        os = null;
-
-      if (macosPlatforms.indexOf(platform) !== -1) {
-        os = "Mac OS";
-      } else if (iosPlatforms.indexOf(platform) !== -1) {
-        os = "iOS";
-      } else if (windowsPlatforms.indexOf(platform) !== -1) {
-        os = "Windows";
-      } else if (/Android/.test(userAgent)) {
-        os = "Android";
-      } else if (!os && /Linux/.test(platform)) {
-        os = "Linux";
-      }
-
-      return os;
-    },
+  data() {
+    return {
+      intro: config.intro,
+      groom: config.groom,
+      bride: config.bride,
+      isIOS: /iPhone|iPad|iPod/.test(window.navigator.userAgent),
+    };
   },
+  methods: { asset },
 };
 </script>
 
@@ -52,12 +41,10 @@ export default {
   height: 100vh;
   max-height: 780px;
   background-color: #ffffff;
-  font-size: 0;
   .image {
     display: flex;
     flex: 1;
-    padding-left: $padding-vertical;
-    padding-right: $padding-vertical;
+    padding: 0 $padding-vertical;
     justify-content: center;
     align-items: flex-end;
     img {
@@ -65,14 +52,38 @@ export default {
       max-height: 100%;
     }
   }
-  .movie {
-    //todo: 실제론 iframe 아니라 video 태그 넣을거임. 임시로 유튜브 넣어둠
-    video {
-      width: 100vw;
-      height: 100vw;
-      max-width: 460px;
-      max-height: 460px;
+  .title {
+    text-align: center;
+    color: #202121;
+    padding-bottom: 24px;
+    h1 {
+      font-family: $font-script;
+      font-size: 40px;
+      line-height: 1.3;
     }
+    .ribbon {
+      width: 200px;
+      height: 2px;
+      margin: 14px auto 18px;
+      background: #e9b949;
+    }
+    .names {
+      font-family: $font-script;
+      font-size: 30px;
+      line-height: 1.4;
+      span {
+        display: block;
+        font-size: 20px;
+        color: #e9b949;
+      }
+    }
+  }
+  .movie video {
+    display: block;
+    width: 100vw;
+    height: 100vw;
+    max-width: 460px;
+    max-height: 460px;
   }
 }
 </style>

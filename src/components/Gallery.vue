@@ -2,23 +2,23 @@
   <div class="gallery">
     <img src="~@/assets/images/bunny.png" class="bunny" />
     <div class="description">
-      photo gallery
+      album ảnh cưới
     </div>
     <div></div>
     <div class="gallery-container" ref="gal">
-      <div class="gallery-inner">
-        <div class="gallery-item" v-for="n in 13" :key="n">
+      <div class="gallery-inner" :style="{ width: photos.length * 250 + 120 + 'px' }">
+        <div class="gallery-item" v-for="(file, i) in photos" :key="file">
           <div class="image">
             <img
-              :src="`/wedding/gallery/${n - 1}.jpg`"
+              :src="asset('gallery/' + file)"
               :style="{
-                transform: `translateX(${(((scrollX - (n - 1) * 250) / 4.8 +
+                transform: `translateX(${(((scrollX - i * 250) / 4.8 +
                   50 >
                 100
                   ? 100
-                  : (scrollX - (n - 1) * 250) / 4.8 + 50 < 0
+                  : (scrollX - i * 250) / 4.8 + 50 < 0
                   ? 0
-                  : (scrollX - (n - 1) * 250) / 4.8 + 50) /
+                  : (scrollX - i * 250) / 4.8 + 50) /
                   100) *
                   -55}px)`,
               }"
@@ -32,12 +32,17 @@
 </template>
 
 <script>
+import config from "../../wedding.config.js";
+import { asset } from "../asset.js";
+
 export default {
   name: "Gallery",
+  methods: { asset },
   data() {
     return {
       scrollX: 0,
       width: 320,
+      photos: config.gallery,
     };
   },
   mounted() {
@@ -48,7 +53,7 @@ export default {
       document.documentElement.clientWidth || 0,
       window.innerWidth || 0
     );
-    this.$refs.gal.scrollLeft = 850;
+    this.$refs.gal.scrollLeft = Math.min(850, (this.photos.length - 1) * 250);
   },
 };
 </script>
@@ -79,7 +84,6 @@ export default {
     overflow-x: auto;
     .gallery-inner {
       display: flex;
-      width: 3370px;
       .gallery-item {
         flex: 0 0 240px;
         position: relative;

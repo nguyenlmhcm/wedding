@@ -1,24 +1,23 @@
-# 브라운&제인의 모바일 청첩장
-모바일 청첩장을 위한 레파지토리
+# Thiệp cưới online
 
-Vue 로 작업했고 Firebase Realtime Database 로 위시리스트 구현
+Fork từ [kimyoon21/wedding](https://github.com/kimyoon21/wedding) (thiệp Hàn), đã chuyển sang tiếng Việt.
+Mọi thông tin nằm trong **một file: `wedding.config.js`**.
 
-떨어지는 꽃잎은 scss 로 구현했습니다. 
+## Sửa thiệp
+1. Mở `wedding.config.js`: tên cô dâu chú rể, ngày giờ, ngày Âm lịch, bố mẹ hai bên, nhà hàng, số tài khoản mừng cưới.
+2. Thay ảnh/video trong `public/`:
+   - `public/intro.mp4` + `public/img/video-thumbnail.jpg`: video mở đầu (để `video: null` nếu không có).
+   - `public/gallery/`: ảnh album (khung vòm 240×360, nên dùng ảnh dọc), rồi ghi tên file vào `gallery`.
+   - `public/img/thumbnail.jpg`: ảnh hiện khi gửi link qua Zalo/Messenger.
+   - Có tranh vẽ riêng cho phần mở đầu: đặt `public/img/intro.png`, ghi `intro.image: "img/intro.png"`.
+   - Mã QR ngân hàng: đặt ảnh vào `public/img/`, ghi vào `qr` của từng tài khoản.
 
-안드로이드의 모바일웹뷰에서 보았을때 모든 기능이 최적화된 상태로 보입니다.
+> ⚠️ Ảnh/video hiện tại là của cặp đôi gốc — **phải thay bằng ảnh của mình trước khi gửi khách**.
 
-## Project setup
+## Chạy thử / xuất bản
 ```
 npm install
+npm run serve      # xem thử ở http://localhost:8080
+npm run build      # xuất ra thư mục docs/
 ```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
+Đăng lên GitHub Pages: Settings → Pages → Branch `main`, thư mục `/docs` → link `https://<tài-khoản>.github.io/wedding/`.
